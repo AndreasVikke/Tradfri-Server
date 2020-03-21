@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="{{ url_for('static',filename='js/main.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/style.css') }}" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/fdfad428ed.js" crossorigin="anonymous"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lights Gateway</title>
+</head>
+<body>
+    <div class="content d-flex align-items-center justify-content-center"><div id="lights" class="d-flex"></div></div>
+    <div class="color-box hidden"><div id="colors"><h3 id="colors-name"></h3><i  onclick="buttonColorsHide()" class="color-close fas fa-times fa-2x"></i></div></div>
+</body>
+</html>

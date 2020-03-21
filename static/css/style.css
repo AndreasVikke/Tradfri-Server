@@ -1,0 +1,67 @@
+body {
+    height: 100%;
+}
+.content {
+    height: 100vh;
+}
+
+.onoff {
+    background: none;
+    border: none;
+    color: #777777;
+}
+.card {
+    margin: 1rem;
+}
+.card-body {
+    text-align: center;
+}
+.card-img-top {
+    text-align: center;
+    margin-top: .5rem;
+}
+.card-img-top i {
+    color:#777777;
+}
+.card-img-top .light-toggle {
+    color: #FFD54F;
+}
+.card-body .dimmer {
+    width: 100%;
+}
+
+.hidden {
+    display: none;
+}
+.color-box {
+    top: 0;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+#colors {
+    width: 26rem;
+    background-color:  #fbfbfb;
+    border-radius: 10px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    top: 1rem;
+    text-align: center;
+    padding: .5rem;
+}
+#colors .color {
+    display: inline-block;
+    width: 4rem;
+    height: 4rem;
+    margin: .5rem;
+    border-radius: 50%;
+    border: 1px solid rgb(194, 194, 194);
+}
+.color-close {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
