@@ -1,10 +1,8 @@
 from flask import Flask, request, render_template, jsonify, abort
+import TradfriAPI as tfapi
+import json
 import sys
 import os
-import json
-
-from pytradfri import Gateway
-from pytradfri.api.libcoap_api import APIFactory
 
 app = Flask(__name__)
 
@@ -12,36 +10,65 @@ app = Flask(__name__)
 def index():
     return render_template('index.html')
 
-@app.route('/api/lights/')
-def ligth_list():
-    connect()
-    lights = get_lights()
-    return jsonify(lights)
+# === GET ===
+@app.route('/api/group/all')
+def get_group_all():
+    lights = tfapi.get_lights()    
+    return jsonify([
+        {'name' : dev.name, 
+        'id' : idx, 
+        'type' : dev.light_control.lights[0].supported_features, 
+        'state' : dev.light_control.lights[0].state, 
+        'dimmer' : dev.light_control.lights[0].dimmer,
+        'color' : get_rgb_color_by_xy(dev.light_control.lights[0].xy_color)} for idx, dev in enumerate(lights)])  
 
-@app.route('/api/lights/state/<int:id>', methods=['GET'])
-def get_light_state(id):
-    connect()
-    lights = get_light_devices()
-
+@app.route('/api/group/state/<int:id>', methods=['GET'])
+def get_group_state(id):
+    lights = tfapi.get_lights()   
     state = lights[id].light_control.lights[0].state
     return jsonify({'light' : {'id' : id, 'state' : state}})
 
-@app.route('/api/lights/dimmer/<int:id>', methods=['GET'])
-def get_light_dimmer(id):
-    connect()
-    lights = get_light_devices()
-
+@app.route('/api/group/dimmer/<int:id>', methods=['GET'])
+def get_group_dimmer(id):
+    lights = tfapi.get_lights()   
     dimmer = lights[id].light_control.lights[0].dimmer
     return jsonify({'light' : {'id' : id, 'dimmer' : dimmer}})
 
-@app.route('/api/colors/', methods=['GET'])
-def get_light_colors():
+@app.route('/api/group/color/<int:id>', methods=['GET'])
+def get_group_color(id):
+    lights = tfapi.get_lights()   
+    color = lights[id].light_control.lights[0].xy_color
+    return jsonify({'light' : {'id' : id, 'color' : color}})
+
+@app.route('/api/colors/all', methods=['GET'])
+def get_group_colors():
     with open(os.path.join(app.root_path, 'colors.json')) as f:
         d = json.load(f)
         return jsonify(d)
 
-@app.route('/api/lights/state/<int:id>', methods=['POST'])
-def set_light_state(id):
+@app.route('/api/colors/rgb', methods=['GET'])
+def get_rgb_color():
+    if not request.json or not 'color' in request.json:
+        abort(400, 'No color in body')
+
+    xy = request.json['color']
+    if len(xy) != 2:
+        abort(400, 'Color must contain x and y value')
+
+    return get_rgb_color_by_xy(xy)
+
+def get_rgb_color_by_xy(xy):
+    if xy == None:
+        return None
+    with open(os.path.join(app.root_path, 'colors.json')) as f:
+        d = json.load(f)
+        for color in d['colors']:
+            if color['xy'][0] == xy[0] and color['xy'][1] == xy[1]:
+                return color['rgb']
+
+# === POST ===
+@app.route('/api/group/state', methods=['POST'])
+def set_group_state_all():
     if not request.json or not 'state' in request.json:
         abort(400, 'No state in body')
 
@@ -49,18 +76,23 @@ def set_light_state(id):
     if state != True and state != False:
         abort(400, 'State must bee either true or false')
 
-    api = connect()
-    lights = get_light_devices()
+    tfapi.set_state_all(state)
+    return get_group_all()
 
-    if id == 1:
-        for socket in get_socket_devices():
-            api(socket.socket_control.set_state(state))
+@app.route('/api/group/state/<int:id>', methods=['POST'])
+def set_group_state(id):
+    if not request.json or not 'state' in request.json:
+        abort(400, 'No state in body')
 
-    api(lights[id].light_control.set_state(state))
+    state = request.json['state'] in ("true")
+    if state != True and state != False:
+        abort(400, 'State must bee either true or false')
+
+    tfapi.set_state(id, state)
     return jsonify({'light' : {'id' : id, 'state' : state}})
 
-@app.route('/api/lights/dimmer/<int:id>', methods=['POST'])
-def set_light_dimmer(id):
+@app.route('/api/group/dimmer/<int:id>', methods=['POST'])
+def set_group_dimmer(id):
     if not request.json or not 'dimmer' in request.json:
         abort(400, 'No dimmer in body')
 
@@ -68,60 +100,20 @@ def set_light_dimmer(id):
     if dimmer < 0 or dimmer > 254:
         abort(400, 'Dimmer must bee between 0 and 254')
 
-    api = connect()
-    lights = get_light_devices()
-
-    api(lights[id].light_control.set_dimmer(dimmer))
+    tfapi.set_dimmer(id, dimmer)
     return jsonify({'light' : {'id' : id, 'dimmer' : dimmer}})
 
-@app.route('/api/lights/color/<int:id>', methods=['POST'])
-def set_light_color(id):
+@app.route('/api/group/color/<int:id>', methods=['POST'])
+def set_group_color(id):
     if not request.json or not 'color' in request.json:
         abort(400, 'No color in body')
 
     xy = request.json['color']
+    if len(xy) != 2:
+        abort(400, 'Color must contain x and y value')
 
-    api = connect()
-    lights = get_light_devices()
-
-    api(lights[id].light_control.set_xy_color(int(xy[0]), int(xy[1])))
-    api(lights[id].light_control.set_state(True))
+    tfapi.set_color(id, xy)
     return jsonify({'light' : {'id' : id, 'color' : xy}})
-
-
-def connect():
-    api_factory = APIFactory(host='192.168.1.2', psk_id='f712f4d5aaa642bcbce7ab5cf501bca9', psk='HkNXWgUOl2u0cUUa')
-    api = api_factory.request
-    return api
-
-def get_lights():
-    api = connect()
-    gateway = Gateway()
-    devices_command = gateway.get_devices()
-    devices_commands = api(devices_command)
-    devices = api(devices_commands)
-    lights = [{'name' : dev.name, 'id' : idx, 'type' : dev.light_control.lights[0].supported_features, 'state' : dev.light_control.lights[0].state, 'dimmer' : dev.light_control.lights[0].dimmer} for idx, dev in enumerate(devices) if dev.has_light_control]
-    return lights
-
-def get_light_devices():
-    api = connect()
-    gateway = Gateway()
-    devices_command = gateway.get_devices()
-    devices_commands = api(devices_command)
-    devices = api(devices_commands)
-    lights = [dev for dev in devices if dev.has_light_control]
-    return lights
-
-def get_socket_devices():
-    api = connect()
-    gateway = Gateway()
-    devices_command = gateway.get_devices()
-    devices_commands = api(devices_command)
-    devices = api(devices_commands)
-    sockets = [dev for dev in devices if dev.has_socket_control]
-    return sockets
-
-
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)

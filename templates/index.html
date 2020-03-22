@@ -11,7 +11,9 @@
     <title>Lights Gateway</title>
 </head>
 <body>
+    <div class="all-toggle" onclick="change_group_state_all_event('true')"><i class='fas fa-power-off fa-2x'></i><br/>Turn All On</div>
+    <div class="all-toggle" onclick="change_group_state_all_event('false')"><i class='fas fa-power-off fa-2x'></i><br/>Turn All Off</div>
     <div class="content d-flex align-items-center justify-content-center"><div id="lights" class="d-flex"></div></div>
-    <div class="color-box hidden"><div id="colors"><h3 id="colors-name"></h3><i  onclick="buttonColorsHide()" class="color-close fas fa-times fa-2x"></i></div></div>
+    <div class="color-box hidden"><div id="colors"><h3 id="colors-name"></h3><i  onclick="color_group_hide_event()" class="color-close fas fa-times fa-2x"></i></div></div>
 </body>
 </html>

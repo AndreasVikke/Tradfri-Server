@@ -65,3 +65,17 @@ body {
     right: 10px;
     top: 10px;
 }
+.all-toggle {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    text-align: center;
+    cursor: pointer;
+}
+.all-toggle:nth-child(1) {
+    left: 7rem;
+    text-align: center;
+}
+button:focus, input:focus, i:focus {
+    outline: none;
+}
