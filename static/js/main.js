@@ -172,11 +172,11 @@ function create_card(light) {
     card.append($('<div/>', {
         "class" : "card-img-top"
     }).html($("<i />", {
-        "class" : `fas fa-lightbulb fa-5x ${(light.state == true ? "light-toggle" : "")}`,
+        "class" : `fas fa-lightbulb fa-5x ${(light.state != true ? "light-toggle" : "")}`,
         "data-id" : light.id,
         "data-name" : light.name,
         "onclick" : `${light.type == 29 ? 'color_group_show_event(this)' : ''}`,
-        "style" : light.color != null && light.state == true ? `color: rgb(${light.color[0]},${light.color[1]},${light.color[2]})` : ""
+        "style" : light.color != null ? `color: rgb(${light.color[0]},${light.color[1]},${light.color[2]})` : ""
     })))
     card_body = $('<div/>', {
         "class" : "card-body"

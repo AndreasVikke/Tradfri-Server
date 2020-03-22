@@ -21,10 +21,10 @@ body {
     margin-top: .5rem;
 }
 .card-img-top i {
-    color:#777777;
+    color:#FFD54F;
 }
 .card-img-top .light-toggle {
-    color: #FFD54F;
+    color: #777 !important;
 }
 .card-body .dimmer {
     width: 100%;
