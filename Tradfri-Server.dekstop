@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Exec=sudo bash -c "rm -r /home/pi/Tradfri-Server;git clone https://github.com/AndreasVikke/Tradfri-Server;chmod 777 /home/pi/Tradfri-Server/start.sh;/home/pi/Tradfri-Server/start.sh;$SHELL"
+Name=Tradfri Server
+GenericName=Trafri Server
+Comment=Start Tradfri Server
+Encoding=UTF-8
+Terminal=true
+Type=Application
+Categories=Application;Network;
