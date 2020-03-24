@@ -157,6 +157,9 @@ function get_colors() {
     });
 }
 
+/*
+    === Create Functions ===
+*/
 function update_groups(response) {
     $('#lights').html('');
     response.forEach(light => {
@@ -201,3 +204,25 @@ function create_card(light) {
     card.append(card_body)
     return card;
 }
+
+/*
+    === Clock Functions ===
+*/
+function startTime() {
+    var today = new Date();
+    var h = today.getHours();
+    var m = today.getMinutes();
+    var s = today.getSeconds();
+    m = zeroInt(m);
+    s = zeroInt(s);
+    y = today.getFullYear();
+    mm = today.getMonth()+1;
+    d = today.getDate();
+    document.getElementById('clock').innerHTML =
+    h + ":" + m + ":" + s + " - " + zeroInt(d) + "/" + zeroInt(mm) + "/" + y;
+    var t = setTimeout(startTime, 500);
+  }
+  function zeroInt(i) {
+    if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
+    return i;
+  }

@@ -76,6 +76,11 @@ body {
     left: 7rem;
     text-align: center;
 }
+.all-toggle:nth-child(2) {
+    left: 14rem;
+    text-align: center;
+    font-size: 2.5rem;
+}
 button:focus, input:focus, i:focus {
     outline: none;
 }
