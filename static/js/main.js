@@ -126,6 +126,7 @@ function get_groups() {
         success: function(response) {
             console.log(response)
             update_groups(response);
+            setTimeout(get_groups, 300000);
         },
         error: function(error) {
             console.log(error);
