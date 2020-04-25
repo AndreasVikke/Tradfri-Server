@@ -9,8 +9,16 @@ def get_api():
 def get_lights():
     api = get_api()
     gateway = Gateway()
-    
-    devices = api(api(gateway.get_devices()))
+
+    devices = []
+    while(True):
+        try:
+            devices = api(api(gateway.get_devices()))
+            break
+        except:
+            print("Trying again")
+
+
     return [dev for dev in devices if dev.has_light_control]
 
 def get_sockets():
