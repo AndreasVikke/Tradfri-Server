@@ -28,11 +28,11 @@ def get_sockets():
     devices = api(api(gateway.get_devices()))
     return [dev for dev in devices if dev.has_socket_control]
 
-def set_state(id, state):
+def set_state(id, state, kitchen = False):
     api = get_api()
     lights = get_lights()
 
-    if id == 1:
+    if lights[id].name == 'Spisebord':
         for socket in get_sockets():
             api(socket.socket_control.set_state(state))
 
