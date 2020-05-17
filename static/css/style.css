@@ -66,6 +66,7 @@ body {
     top: 10px;
 }
 .all-toggle {
+    z-index: 999;
     position: absolute;
     top: 1rem;
     left: 1rem;
@@ -76,7 +77,8 @@ body {
     left: 7rem;
     text-align: center;
 }
-.all-toggle:nth-child(2) {
+.all-toggle:nth-child(3) {
+    z-index: 0;
     left: 14rem;
     text-align: center;
     font-size: 2.5rem;
